@@ -56,27 +56,72 @@ if s is None:
     print('could not open socket')
     sys.exit(1)
 
+path = os.getcwd()+"/serverFiles"
+try:  
+    os.mkdir(path)
+except OSError: 
+    print ("Creation of the directory %s failed" % path)
+else:  
+    print ("Created the directory %s " % path)
+
 # Get file info
 fileName = ''
 print("Enter File for transfer (only puts file, does not get): ")
 fileName = input()
-print("Transferring %s to default location on server." % (fileName))
-statinfo = os.stat(fileName)
-print("Size of file (in bytes): %s" % (statinfo.st_size))
+
+newPath = path+"/"+fileName
+
+if os.path.exists(newPath):
+    print("File already exists on server.")
+    sys.exit()
 
 # Read file
-if '.txt' in fileName:
+if '.txt' in fileName: # handles text files, read as string and decoded into bytes
     header = str.encode(fileName)
-    file = open(fileName, 'r') # reading text file
+    try:
+        file = open(fileName, 'r') # reading text file
+    except FileNotFoundError: # if the file doesn't exist don't run
+        print(fileName+" does not exist.")
+        print("Exiting program...")
+        sys.exit(0)
+    
+    print("Transferring %s to default location on server." % (fileName))
+    
+    statinfo = os.stat(fileName) # checking the size of file
+
+    if statinfo:
+        print("Size of file (in bytes): %s" % (statinfo.st_size)) 
+    else:
+        print("File is of size zero (empty file).") # if size is zero then dont continue because file is empty.
+        print("Exiting program...")
+        sys.exit(0)
+
     readFile = file.read()
     readFile = readFile.replace('\n', '\0')
     readFile = readFile.encode()
-    print("Asking for file: " + fileName)
     fileSend(s, header) # send file name
     fileSend(s, readFile) # send the data 
-else:
+else:                                       # handles other file types, read as bytes
     header = str.encode(fileName)
-    file = open(fileName, 'rb') # read that jpg's and exe's are read in bytes
+
+    try:
+        file = open(fileName, 'rb') # read that jpg's and exe's are read in bytes
+    except FileNotFoundError:
+        print(fileName+" does not exist.")
+        print("Exiting program...")
+        sys.exit(0)
+
+    print("Transferring %s to default location on server." % (fileName))
+    
+    statinfo = os.stat(fileName) # checking the size of file
+
+    if statinfo:
+        print("Size of file (in bytes): %s" % (statinfo.st_size)) 
+    else:
+        print("File is of size zero (empty file).") # if size is zero then dont continue because file is empty.
+        print("Exiting program...")
+        sys.exit(0)
+
     readFile = file.read()
-    fileSend(s, header)
-    fileSend(s, readFile, debug)
+    fileSend(s, header) # send file name
+    fileSend(s, readFile, debug) # send the data

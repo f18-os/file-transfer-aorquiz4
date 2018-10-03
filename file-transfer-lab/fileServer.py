@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-import sys
+import sys, os
 sys.path.append("../lib")       # for params
 import re, socket, params
 
@@ -39,7 +39,7 @@ while True:
     else:
         fileName = payload.decode() # convert to string by decoding bytes
         data = fileReceive(sock, debug) # second payload is the data in the file
-        wrtieFile = open('new_'+fileName, 'wb')
+        wrtieFile = open(os.getcwd()+"/serverFiles/"+fileName, 'wb')
         wrtieFile.write(data)
         wrtieFile.close()  # write the new file and close it
         print("complete")
