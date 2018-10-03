@@ -25,8 +25,11 @@ File `fileForkServer.py` is code that works simillarly to fileServer.py except i
 
 To run:
 * Simple file server and client run and execute the following commands on seperate terminals. Once running `fileClient.py` will ask for a file name.
-	$ ./fileServer.py
-	$ ./fileClient.py
+
+$ ./fileServer.py
+
+$ ./fileClient.py
+
 
 * With stammer-proxy it's the same as above but first run `stammerProxy.py`. One different is when running client. Again each command in a seperate terminal.
 	$ ./stammerProxy.py
