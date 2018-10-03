@@ -32,14 +32,14 @@ print("connection rec'd from", addr)
 from fileSock import fileSend, fileReceive
 
 while True:
-    payload = fileReceive(sock, debug)
+    payload = fileReceive(sock, debug) # first payload is files name
     if debug: print("rec'd: ", payload)
     if not payload:
         break
     else:
-        fileName = payload.decode()
-        data = fileReceive(sock, debug)
+        fileName = payload.decode() # convert to string by decoding bytes
+        data = fileReceive(sock, debug) # second payload is the data in the file
         wrtieFile = open('new_'+fileName, 'wb')
         wrtieFile.write(data)
-        wrtieFile.close()
+        wrtieFile.close()  # write the new file and close it
         print("complete")
