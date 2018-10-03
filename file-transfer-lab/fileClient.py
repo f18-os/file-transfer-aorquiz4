@@ -66,14 +66,17 @@ print("Size of file (in bytes): %s" % (statinfo.st_size))
 
 # Read file
 if '.txt' in fileName:
+    header = str.encode(fileName)
     file = open(fileName, 'r') # reading text file
     readFile = file.read()
     readFile = readFile.replace('\n', '\0')
     readFile = readFile.encode()
+    print("Asking for file: " + fileName)
+    fileSend(s, header) # send file name
+    fileSend(s, readFile) # send the data 
 else:
+    header = str.encode(fileName)
     file = open(fileName, 'rb') # read that jpg's and exe's are read in bytes
     readFile = file.read()
-
-print("Asking for file: " + fileName)
-fileSend(s, readFile, fileName, debug)
-#print("received:", fileReceive(s, debug))
+    fileSend(s, header)
+    fileSend(s, readFile, debug)

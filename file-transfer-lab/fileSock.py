@@ -1,10 +1,6 @@
 import re
 
-fileName = ""
-
-def fileSend(sock, payload, fName, debug=0):
-     global fileName
-     fileName = fName
+def fileSend(sock, payload, debug=0):
      if debug: print("framedSend: sending %d byte message" % len(payload))
      msg = str(len(payload)).encode() + b':' + payload
      while len(msg):
@@ -15,13 +11,11 @@ rbuf = b""                      # static receive buffer
 
 def fileReceive(sock, debug=0):
     global rbuf
-    global fileName
-    fName = fileName
     state = "getLength"
     msgLength = -1
     while True:
          if (state == "getLength"):
-             match = re.match(b'([^:]+):(.*)', rbuf) # look for colon
+             match = re.match(b'([^:]+):(.*)', rbuf, re.DOTALL | re.MULTILINE) # look for colon
              if match:
                   lengthStr, rbuf = match.groups()
                   try: 
@@ -35,12 +29,6 @@ def fileReceive(sock, debug=0):
              if len(rbuf) >= msgLength:
                  payload = rbuf[0:msgLength]
                  rbuf = rbuf[msgLength:]
-                 if '.txt' in fName: # still not sure how to differentiate extensions types of files
-                    writeFile = open('001.txt', 'wb')
-                 elif '.jpg' in fName:
-                    writeFile = open('001.jpg', 'wb') 
-                 
-                 writeFile.write(payload) # file should be created
                  return payload
          r = sock.recv(100)
          rbuf += r

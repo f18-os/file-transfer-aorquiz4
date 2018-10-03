@@ -1,8 +1,9 @@
 #! /usr/bin/env python3
-
 import sys
 sys.path.append("../lib")       # for params
-import re, socket, params
+
+import os, socket, params
+
 
 switchesVarDefaults = (
     (('-l', '--listenPort') ,'listenPort', 50001),
@@ -24,22 +25,22 @@ lsock.bind(bindAddr)
 lsock.listen(5)
 print("listening on:", bindAddr)
 
-sock, addr = lsock.accept()
-
-print("connection rec'd from", addr)
-
-
-from fileSock import fileSend, fileReceive
-
 while True:
-    payload = fileReceive(sock, debug)
-    if debug: print("rec'd: ", payload)
-    if not payload:
-        break
-    else:
-        fileName = payload.decode()
-        data = fileReceive(sock, debug)
-        wrtieFile = open('new_'+fileName, 'wb')
-        wrtieFile.write(data)
-        wrtieFile.close()
-        print("complete")
+    sock, addr = lsock.accept()
+
+    from fileSock import fileSend, fileReceive
+
+    if not os.fork():
+        print("new child process handling connection from", addr)
+        while True:
+            payload = fileReceive(sock, debug)
+            if debug: print("rec'd: ", payload)
+            if not payload:
+                break
+            else:
+                fileName = payload.decode()
+                data = fileReceive(sock, debug)
+                wrtieFile = open('new_'+fileName, 'wb')
+                wrtieFile.write(data)
+                wrtieFile.close()
+                print("complete")
