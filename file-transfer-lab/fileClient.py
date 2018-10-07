@@ -89,7 +89,7 @@ if '.txt' in fileName: # handles text files, read as string and decoded into byt
     
     statinfo = os.stat(fileName) # checking the size of file
 
-    if statinfo:
+    if statinfo.st_size:
         print("Size of file (in bytes): %s" % (statinfo.st_size)) 
     else:
         print("File is of size zero (empty file).") # if size is zero then dont continue because file is empty.

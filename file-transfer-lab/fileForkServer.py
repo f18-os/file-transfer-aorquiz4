@@ -34,14 +34,14 @@ while True:
     if not os.fork():
         print("new child process handling connection from", addr)
         while True:
-            payload = fileReceive(sock, debug) # first payload is files name
+            header = fileReceive(sock, debug) # first recieves file's name
             if debug: print("rec'd: ", payload)
             if not payload:
                 break
             else:
-                fileName = payload.decode() 
-                data = fileReceive(sock, debug) # second payload is the data in the file
+                fileName = header.decode() 
+                payload = fileReceive(sock, debug) # second recieves payload (data in the file)
                 wrtieFile = open('new_'+fileName, 'wb')
-                wrtieFile.write(data)
+                wrtieFile.write(payload)
                 wrtieFile.close() # write the new file and close it
                 print("complete")
